@@ -103,6 +103,7 @@ class _GlassTogglePageState extends State<GlassTogglePage> {
                               const SizedBox(height: 36),
                               Semantics(
                                 label: 'Light mode',
+                                enabled: true,
                                 toggled: light,
                                 onTap: toggle,
                                 child: FocusableActionDetector(
@@ -306,10 +307,15 @@ class _TogglePainter extends CustomPainter {
     // Clip and magnify the pill underneath the lens to produce visible refraction.
     canvas.save();
     canvas.clipRRect(lens);
+    canvas.saveLayer(
+      lensRect,
+      Paint()..imageFilter = ImageFilter.blur(sigmaX: 1.2, sigmaY: 1.2),
+    );
     canvas.translate(x, 130);
     canvas.scale(1.13, 1.09);
     canvas.translate(-x, -130);
     track(canvas);
+    canvas.restore();
     canvas.restore();
     canvas.drawRRect(
       lens,
