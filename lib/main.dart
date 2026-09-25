@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'glass_toggle_page.dart';
+import 'glass_modal_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -82,6 +83,16 @@ class _GlassHomeState extends State<GlassHome> {
                           ),
                         ),
                       ),
+                      GlassIcon(
+                        icon: Icons.expand_less_rounded,
+                        label: 'Open glass modal',
+                        onTap: () => Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => const GlassModalPage(),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
                       GlassIcon(
                         icon: Icons.auto_awesome_outlined,
                         label: 'Open glass toggle',
