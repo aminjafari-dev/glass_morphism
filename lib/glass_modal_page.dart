@@ -21,6 +21,7 @@ class _GlassModalPageState extends State<GlassModalPage>
   bool _closing = false;
   double _start = 0;
   double _drag = 0;
+  double _startBottomOffset = 0;
 
   double _sample(List<double> times, List<double> values, double t) {
     for (var i = 1; i < times.length; i++) {
@@ -66,10 +67,26 @@ class _GlassModalPageState extends State<GlassModalPage>
           _motion.value,
         );
 
+  // The lower rim lifts, dips past its resting position, then settles.
+  // Keep its current offset when a tap reverses an unfinished transition.
+  double get _bottomOffset => _closing
+      ? _sample(
+          [0, .18, .40, .65, .83, 1],
+          [_startBottomOffset, -3, 5, -2.5, .8, 0],
+          _motion.value,
+        )
+      : _sample(
+          [0, .17, .40, .64, .82, 1],
+          [_startBottomOffset, 2, -7, 3.5, -1.2, 0],
+          _motion.value,
+        );
+
   void _toggle() {
     final current = _progress;
+    final currentBottomOffset = _bottomOffset;
     setState(() {
       _start = current;
+      _startBottomOffset = currentBottomOffset;
       _closing = _expanded;
       _expanded = !_expanded;
     });
@@ -127,7 +144,10 @@ class _GlassModalPageState extends State<GlassModalPage>
                   final height = (50 + 210 * progress) * scale;
                   final rect = Rect.fromLTWH(
                     (constraints.maxWidth - panelWidth) / 2,
-                    constraints.maxHeight - bottom - height,
+                    constraints.maxHeight -
+                        bottom -
+                        height +
+                        _bottomOffset * scale,
                     panelWidth,
                     height,
                   );

@@ -19,7 +19,9 @@ void main() {
     await tester.pump(const Duration(milliseconds: 200));
     final middle = tester.getRect(surface);
     expect(middle.height, greaterThan(collapsed.height));
-    expect(middle.bottom, closeTo(collapsed.bottom, .01));
+    expect(middle.bottom, lessThan(collapsed.bottom));
+    await tester.pump(const Duration(milliseconds: 84));
+    expect(tester.getRect(surface).bottom, greaterThan(collapsed.bottom));
     await tester.pumpAndSettle();
     final expanded = tester.getRect(surface);
     expect(expanded.height, closeTo(260, .01));
@@ -28,12 +30,17 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 170));
     expect(tester.getRect(surface).height, lessThan(expanded.height));
+    expect(tester.getRect(surface).bottom, greaterThan(expanded.bottom));
+    final beforeReversal = tester.getRect(surface).bottom;
     await tester.tap(surface);
+    await tester.pump();
+    expect(tester.getRect(surface).bottom, closeTo(beforeReversal, .01));
     await tester.pumpAndSettle();
     expect(tester.getRect(surface).height, closeTo(expanded.height, .01));
     await tester.drag(surface, const Offset(0, 80));
     await tester.pumpAndSettle();
     expect(tester.getRect(surface).height, closeTo(collapsed.height, .01));
+    expect(tester.getRect(surface).bottom, closeTo(collapsed.bottom, .01));
     expect(tester.takeException(), isNull);
     await tester.tap(find.byTooltip('Back to calm'));
     await tester.pumpAndSettle();
