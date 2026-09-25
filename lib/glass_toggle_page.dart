@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'dart:ui';
+import 'liquid_glass.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -317,50 +318,7 @@ class _TogglePainter extends CustomPainter {
     track(canvas);
     canvas.restore();
     canvas.restore();
-    canvas.drawRRect(
-      lens,
-      Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.white.withValues(alpha: .07 + tone * .09),
-            Colors.white.withValues(alpha: .005),
-            Colors.black.withValues(alpha: .035),
-            Colors.white.withValues(alpha: .035 + tone * .08),
-          ],
-          stops: const [0, .38, .65, 1],
-        ).createShader(lensRect),
-    );
-    canvas.drawRRect(
-      lens.deflate(.5),
-      Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = .8
-        ..shader = LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.white.withValues(alpha: .8),
-            Colors.white.withValues(alpha: .02),
-            Colors.white.withValues(alpha: .015),
-            Colors.white.withValues(alpha: .4),
-          ],
-          stops: const [0, .34, .63, 1],
-        ).createShader(lensRect),
-    );
-    // Soft internal rim caustics, strongest on the illuminated glass.
-    canvas.save();
-    canvas.clipRRect(lens);
-    canvas.drawRRect(
-      lens.deflate(4),
-      Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 5
-        ..color = Colors.white.withValues(alpha: .025 + tone * .12)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
-    );
-    canvas.restore();
+    LiquidGlassPainter.paintLens(canvas, lens, tone);
     final center = Offset(x, 130);
     canvas.drawCircle(
       center,
